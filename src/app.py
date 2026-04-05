@@ -1,9 +1,13 @@
+import os
 import streamlit as st
 import plotly.express as px
 from ingestion import ingest_monetization_data
 from engine import run_statistical_engine, calculate_sample_boundaries
 
 st.set_page_config(page_title="Fintech Revenue Lab", layout="wide", page_icon="💰")
+
+# API key status check
+api_status = "Connected ✅" if os.getenv('ALPHA_VANTAGE_KEY') else "Using Fallback ⚠️"
 
 # Pre-Experiment Setup (Professional Planning) ---
 MDE = 0.02
@@ -13,6 +17,7 @@ n_min, n_max = calculate_sample_boundaries(baseline_conv=0.10, mde=MDE, alpha= A
 # --- Header Section ---
 st.title("💸 Fintech User Monetization Engine")
 st.sidebar.header("📊 Experiment Planning (Unbiased)")
+st.sidebar.write(f"**Market API:** {api_status}")
 st.sidebar.info(f"**Statistically Required N:**\n\nMin: {n_min:,}\n\nMax Boundary: {n_max:,}")
 
 # --- Execution ---
