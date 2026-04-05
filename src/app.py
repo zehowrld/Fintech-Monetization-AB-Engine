@@ -7,7 +7,7 @@ from engine import run_statistical_engine, calculate_sample_boundaries
 st.set_page_config(page_title="Fintech Revenue Lab", layout="wide", page_icon="💰")
 
 # API key status check
-api_status = "Connected ✅" if os.getenv('ALPHA_VANTAGE_KEY') else "Using Fallback ⚠️"
+api_status = "Connected ✅" if os.getenv('ALPHA_VANTAGE_KEY') else "API key missing using Fallback ⚠️"
 
 # Pre-Experiment Setup (Professional Planning) ---
 MDE = 0.02
