@@ -10,13 +10,21 @@ def fetch_market_price(symbol="BTC"):
     """Fetches real-time price using Alpha Vantage."""
     
     api_key = os.getenv('ALPHA_VANTAGE_KEY')
+
+    if not api_key:
+        print("⚠️ API KEY MISSING: Using fallback market price ($65,000).")
+        return 65000.0
+    
     url = f"https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency={symbol}&to_currency=USD&apikey={api_key}"
 
     try:
         r = requests.get(url).json()
+        # Alpha Vantage returns an 'Error Message' key if the key is invalid
+        if "Error Message" in r or "Information" in r:
+            return 65000.0
         return float(r['Realtime Currency Exchange Rate']['5. Exchange Rate'])       
-    except Exception as e:
-        return 65000.0 # Standard fallback
+    except Exception:
+        return 65000.0
     
 def ingest_monetization_data(n_required):
     """Generates A/B test data influenced by real market price."""
@@ -58,8 +66,12 @@ def ingest_monetization_data(n_required):
     return df
 
 if __name__ == "__main__":
-    test_df = ingest_monetization_data(n_required=10000)
-    print("✅ Ingestion Test Successful!")
-    print(test_df.head())
-    print(f"Total Rows Generated: {len(test_df)}")
-    print(f"Columns Ingested: {test_df.columns.to_list()}")
+    
+    if not os.getenv('ALPHA_VANTAGE_KEY'):
+        print("❌ SETUP ERROR: .env file not found or ALPHA_VANTAGE_KEY is empty.")
+    else:
+        test_df = ingest_monetization_data(n_required=10000)
+        print("✅ Ingestion Test Successful!")
+        print(test_df.head())
+        print(f"Total Rows Generated: {len(test_df)}")
+        print(f"Columns Ingested: {test_df.columns.to_list()}")
